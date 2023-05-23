@@ -25,41 +25,39 @@ process.on("unhandledRejection", (err, promise) => {
   server.close(() => process.exit(1));
 });
 
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../client", "dist")));
+app.use(express.static(path.join(__dirname, "../client", "dist")));
 
-  const handleRoutes = function (_, res) {
-    res.sendFile(
-      path.join(__dirname, "../client/dist/index.html"),
-      function (err) {
-        if (err) {
-          res.status(500).send(err);
-        }
+const handleRoutes = function (_, res) {
+  res.sendFile(
+    path.join(__dirname, "../client/dist/index.html"),
+    function (err) {
+      if (err) {
+        res.status(500).send(err);
       }
-    );
-  };
-
-  app.get(["/login", "/register", "/home", "/"], handleRoutes);
-
-  app.get("/:id", async function (req, res, next) {
-    const id = req.params.id;
-    try {
-      const url = await URLs.findOne({ shortId: id });
-      if (!url) {
-        return res.sendFile(
-          path.join(__dirname, "../client/dist/error.html"),
-          function (err) {
-            if (err) {
-              res.status(500).send(err);
-            }
-          }
-        );
-      }
-      url.clicks++;
-      url.save();
-      res.redirect(url.redirectUrl);
-    } catch (error) {
-      next(error);
     }
-  });
-}
+  );
+};
+
+app.get(["/login", "/register", "/home", "/"], handleRoutes);
+
+app.get("/:id", async function (req, res, next) {
+  const id = req.params.id;
+  try {
+    const url = await URLs.findOne({ shortId: id });
+    if (!url) {
+      return res.sendFile(
+        path.join(__dirname, "../client/dist/error.html"),
+        function (err) {
+          if (err) {
+            res.status(500).send(err);
+          }
+        }
+      );
+    }
+    url.clicks++;
+    url.save();
+    res.redirect(url.redirectUrl);
+  } catch (error) {
+    next(error);
+  }
+});
