@@ -72,7 +72,7 @@ const Login = () => {
         toast({
           title: response.message || response.error,
           status: response.success ? "success" : "error",
-          duration: 5000,
+          duration: 3000,
           isClosable: true,
           position: "top",
         });

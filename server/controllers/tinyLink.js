@@ -32,8 +32,9 @@ exports.shorten = async (req, res, next) => {
 exports.getData = async (req, res, next) => {
   URLs.find({ userId: req.userId })
     .then((results) => {
-      return res.status(200).json({
+      return res.json({
         data: results,
+        success: true,
       });
     })
     .catch((err) => {

@@ -17,8 +17,6 @@ import { Link, useNavigate } from "react-router-dom";
 
 export const Navbar = () => {
   const navigate = useNavigate();
-  const [showMenu, setShowMenu] = useState(false);
-
   const isSmallScreen = useBreakpointValue({ base: true, md: false });
 
   return (

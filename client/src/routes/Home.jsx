@@ -49,7 +49,19 @@ const Home = () => {
     })
       .then((response) => response.json())
       .then((response) => {
-        setData(response.data);
+        if (!response.success) {
+          localStorage.removeItem("accessToken"); //remove the invalid token
+          toast({
+            title: "User is Unauthorized!",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+            position: "top",
+          });
+          navigate("/login");
+        } else {
+          setData(response.data);
+        }
       })
       .catch((error) => console.log(error))
       .finally(() => setshowProgress(false));
