@@ -30,7 +30,12 @@ import {
   Stack,
   useBreakpointValue,
 } from "@chakra-ui/react";
-import { EditIcon, DeleteIcon } from "@chakra-ui/icons";
+import {
+  EditIcon,
+  DeleteIcon,
+  ExternalLinkIcon,
+  CopyIcon,
+} from "@chakra-ui/icons";
 import { motion } from "framer-motion";
 
 const UrlTable = ({ data, fetchData }) => {
@@ -210,11 +215,11 @@ const UrlTable = ({ data, fetchData }) => {
         <Table variant="simple">
           <Thead>
             <Tr>
-              <Th>#</Th>
-              <Th>Short ID</Th>
-              <Th>Clicks</Th>
-              <Th>Created At</Th>
-              <Th>Action</Th>
+              <Th textAlign={"center"}>#</Th>
+              <Th textAlign={"center"}>ID</Th>
+              <Th textAlign={"center"}>Clicks</Th>
+              <Th textAlign={"center"}>Created At</Th>
+              <Th textAlign={"center"}>Action</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -226,18 +231,23 @@ const UrlTable = ({ data, fetchData }) => {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
                 <Td>{index + 1}</Td>
-                <Td>
+                <Td>{item.shortId}</Td>
+                <Td>{item.clicks}</Td>
+                <Td>{formatDate(item.createdAt)}</Td>
+                <Td display={"flex"} gap={2}>
                   <Link
                     href={makeLink(item.shortId)}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    {item.shortId}
+                    <IconButton icon={<ExternalLinkIcon />} />
                   </Link>
-                </Td>
-                <Td>{item.clicks}</Td>
-                <Td>{formatDate(item.createdAt)}</Td>
-                <Td>
+                  <IconButton
+                    icon={<CopyIcon />}
+                    onClick={() =>
+                      navigator.clipboard.writeText(makeLink(item.shortId))
+                    }
+                  />
                   <IconButton
                     aria-label="Edit"
                     icon={<EditIcon />}
@@ -245,13 +255,11 @@ const UrlTable = ({ data, fetchData }) => {
                       setLongUrl(item.redirectUrl);
                       handleClick(item._id, "edit");
                     }}
-                    m={1}
                   />
                   <IconButton
                     aria-label="Delete"
                     icon={<DeleteIcon />}
                     onClick={() => handleClick(item._id, "delete")}
-                    m={1}
                   />
                 </Td>
               </motion.tr>
