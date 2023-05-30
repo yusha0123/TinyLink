@@ -7,7 +7,6 @@ import {
   Tr,
   Th,
   Td,
-  IconButton,
   Link,
   AlertDialog,
   AlertDialogBody,
@@ -29,12 +28,18 @@ import {
   Input,
   Stack,
   useBreakpointValue,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  Flex,
 } from "@chakra-ui/react";
 import {
   EditIcon,
   DeleteIcon,
   ExternalLinkIcon,
   CopyIcon,
+  ChevronDownIcon,
 } from "@chakra-ui/icons";
 import { motion } from "framer-motion";
 
@@ -211,15 +216,15 @@ const UrlTable = ({ data, fetchData }) => {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      <TableContainer>
+      <TableContainer boxShadow={"md"}>
         <Table variant="simple">
           <Thead>
             <Tr>
               <Th textAlign={"center"}>#</Th>
-              <Th textAlign={"center"}>ID</Th>
+              <Th textAlign={"center"}>Details</Th>
               <Th textAlign={"center"}>Clicks</Th>
               <Th textAlign={"center"}>Created At</Th>
-              <Th textAlign={"center"}>Action</Th>
+              <Th textAlign={"center"}>Actions</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -231,36 +236,67 @@ const UrlTable = ({ data, fetchData }) => {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
                 <Td>{index + 1}</Td>
-                <Td>{item.shortId}</Td>
+                <Td display={"flex"} gap={2} flexDirection={"column"}>
+                  <Flex gap={1} alignItems="center">
+                    <Link href={makeLink(item.shortId)} isExternal>
+                      {makeLink(item.shortId)}
+                    </Link>
+                    <ExternalLinkIcon />
+                  </Flex>
+                  <Flex gap={1} alignItems="center">
+                    <Link
+                      href={item.redirectUrl}
+                      isExternal
+                      isTruncated
+                      maxW="300px"
+                    >
+                      {item.redirectUrl}
+                    </Link>
+                    <ExternalLinkIcon />
+                  </Flex>
+                </Td>
                 <Td>{item.clicks}</Td>
                 <Td>{formatDate(item.createdAt)}</Td>
-                <Td display={"flex"} gap={2}>
-                  <Link
-                    href={makeLink(item.shortId)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <IconButton icon={<ExternalLinkIcon />} />
-                  </Link>
-                  <IconButton
-                    icon={<CopyIcon />}
-                    onClick={() =>
-                      navigator.clipboard.writeText(makeLink(item.shortId))
-                    }
-                  />
-                  <IconButton
-                    aria-label="Edit"
-                    icon={<EditIcon />}
-                    onClick={() => {
-                      setLongUrl(item.redirectUrl);
-                      handleClick(item._id, "edit");
-                    }}
-                  />
-                  <IconButton
-                    aria-label="Delete"
-                    icon={<DeleteIcon />}
-                    onClick={() => handleClick(item._id, "delete")}
-                  />
+                <Td>
+                  <Menu>
+                    <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+                      Menu
+                    </MenuButton>
+                    <MenuList>
+                      <Link
+                        href={makeLink(item.shortId)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <MenuItem icon={<ExternalLinkIcon />}>
+                          Open Link
+                        </MenuItem>
+                      </Link>
+                      <MenuItem
+                        icon={<CopyIcon />}
+                        onClick={() =>
+                          navigator.clipboard.writeText(makeLink(item.shortId))
+                        }
+                      >
+                        Copy Link
+                      </MenuItem>
+                      <MenuItem
+                        icon={<EditIcon />}
+                        onClick={() => {
+                          setLongUrl(item.redirectUrl);
+                          handleClick(item._id, "edit");
+                        }}
+                      >
+                        Edit Link
+                      </MenuItem>
+                      <MenuItem
+                        icon={<DeleteIcon />}
+                        onClick={() => handleClick(item._id, "delete")}
+                      >
+                        Delete Link
+                      </MenuItem>
+                    </MenuList>
+                  </Menu>
                 </Td>
               </motion.tr>
             ))}
